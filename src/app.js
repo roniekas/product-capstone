@@ -42,6 +42,6 @@ app.use(errorHandler);
 const db = require('./models');
 
 // Uncomment this line if you want to sync database model
-// db.sequelize.sync()
+db.sequelize.sync()
 
 module.exports = app;
