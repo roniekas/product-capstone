@@ -18,16 +18,13 @@ class UserService {
      */
     createUser = async (userBody) => {
         try {
-            let message = 'Successfully Registered the account! Please Verify your email.';
-            if (await this.userDao.isEmailExists(userBody.email)) {
-                return responseHandler.returnError(httpStatus.BAD_REQUEST, 'Email already taken');
+            let message = 'Successfully Registered the account!';
+            if (await this.userDao.isUsernameExists(userBody.userName)) {
+                return responseHandler.returnError(httpStatus.BAD_REQUEST, 'Username Already Taken!');
             }
-            const uuid = uuidv4();
-            userBody.email = userBody.email.toLowerCase();
-            userBody.password = bcrypt.hashSync(userBody.password, 8);
-            userBody.uuid = uuid;
-            userBody.status = userConstant.STATUS_ACTIVE;
-            userBody.email_verified = userConstant.EMAIL_VERIFIED_FALSE;
+            userBody.userId = uuidv4();
+            userBody.username = userBody.userName;
+            userBody.pin = userBody.userPin;
 
             let userData = await this.userDao.create(userBody);
 
@@ -38,6 +35,8 @@ class UserService {
           
             userData = userData.toJSON();
             delete userData.password;
+            delete userData.createdAt;
+            delete userData.updatedAt;
 
             return responseHandler.returnSuccess(httpStatus.CREATED, message, userData);
         } catch (e) {
@@ -60,37 +59,37 @@ class UserService {
         return responseHandler.returnSuccess(httpStatus.OK, message);
     };
 
-    getUserByUuid = async (uuid) => {
-        return this.userDao.findOneByWhere({ uuid });
+    getUserByUuid = async (userId) => {
+        return this.userDao.findOneByWhere({ userId });
     };
 
-    changePassword = async (data, uuid) => {
+    changePassword = async (data, userId) => {
         let message = 'Login Successful';
         let statusCode = httpStatus.OK;
-        let user = await this.userDao.findOneByWhere({ uuid });
+        let user = await this.userDao.findOneByWhere({ userId });
 
         if (!user) {
             return responseHandler.returnError(httpStatus.NOT_FOUND, 'User Not found!');
         }
 
-        if (data.password !== data.confirm_password) {
+        if (data.pin !== data.confirmPin) {
             return responseHandler.returnError(
                 httpStatus.BAD_REQUEST,
                 'Confirm password not matched',
             );
         }
 
-        const isPasswordValid = await bcrypt.compare(data.old_password, user.password);
+        const isPasswordValid = data.oldPin === user.pin;
         user = user.toJSON();
-        delete user.password;
+        delete user.pin;
         if (!isPasswordValid) {
             statusCode = httpStatus.BAD_REQUEST;
             message = 'Wrong old Password!';
             return responseHandler.returnError(statusCode, message);
         }
         const updateUser = await this.userDao.updateWhere(
-            { password: bcrypt.hashSync(data.password, 8) },
-            { uuid },
+            { pin: data.confirmPin },
+            { userId },
         );
 
         if (updateUser) {

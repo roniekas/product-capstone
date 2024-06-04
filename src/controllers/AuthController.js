@@ -41,10 +41,10 @@ class AuthController {
 
     login = async (req, res) => {
         try {
-            const { email, password } = req.body;
-            const user = await this.authService.loginWithEmailPassword(
-                email.toLowerCase(),
-                password,
+            const { username, pin } = req.body;
+            const user = await this.authService.loginWithUserPin(
+                username,
+                pin,
             );
             const { message } = user.response;
             const { data } = user.response;
@@ -62,8 +62,22 @@ class AuthController {
     };
 
     logout = async (req, res) => {
-        await this.authService.logout(req, res);
-        res.status(httpStatus.NO_CONTENT).send();
+        let status = true;
+        let code = 200;
+        let message = "Success Logout";
+
+        const isSuccess = await this.authService.logout(req, res);
+
+        if(!isSuccess){
+            status = false;
+            code = 400;
+            message = "failed to logout";
+            res.status(httpStatus.BAD_REQUEST).send({status, code, message});
+        } else if (isSuccess) {
+            res.status(httpStatus.OK).send({status, code, message});
+        }
+
+        res.status(httpStatus.BAD_GATEWAY);
     };
 
     refreshTokens = async (req, res) => {
@@ -87,7 +101,9 @@ class AuthController {
 
     changePassword = async (req, res) => {
         try {
-            const responseData = await this.userService.changePassword(req.body, req.user.uuid);
+            console.log('body ', req.body);
+            console.log('user id ', req.user.userId);
+            const responseData = await this.userService.changePassword(req.body, req.user.userId);
             res.status(responseData.statusCode).send(responseData.response);
         } catch (e) {
             logger.error(e);

@@ -29,7 +29,6 @@ const jwtVerify = async (req, payload, done) => {
 
         let tokenDoc = redisService.hasToken(authorization[1], 'access_token');
         if (!tokenDoc) {
-            console.log('Cache Missed!');
             tokenDoc = await tokenDao.findOne({
                 token: authorization[1],
                 type: tokenTypes.ACCESS,
@@ -46,8 +45,7 @@ const jwtVerify = async (req, payload, done) => {
         }
 
         if (!user) {
-            console.log('User Cache Missed!');
-            user = await userDao.findOneByWhere({ uuid: payload.sub });
+            user = await userDao.findOneByWhere({ userId: payload.sub });
             redisService.setUser(user);
         }
 
@@ -57,7 +55,6 @@ const jwtVerify = async (req, payload, done) => {
 
         done(null, user);
     } catch (error) {
-        console.log(error);
         done(error, false);
     }
 };

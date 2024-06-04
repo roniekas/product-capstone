@@ -24,7 +24,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false
     },
     pin: {
-      type: DataTypes.INTEGER(6),
+      type: DataTypes.STRING(6),
       allowNull: false
     },
     name: {

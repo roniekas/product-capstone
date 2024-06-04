@@ -27,7 +27,7 @@ passport.use('jwt', jwtStrategy);
 app.get('/', async (req, res) => {
     res.status(200).send('Congratulations! API is working!');
 });
-app.use('/api', routes);
+app.use('/api/v1', routes);
 
 // send back a 404 error for any unknown api request
 app.use((req, res, next) => {
@@ -42,6 +42,6 @@ app.use(errorHandler);
 const db = require('./models');
 
 // Uncomment this line if you want to sync database model
-db.sequelize.sync()
+// db.sequelize.sync()
 
 module.exports = app;

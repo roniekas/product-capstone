@@ -27,13 +27,13 @@ class SuperDao {
             });
     }
 
-    async findOneByWhere(where, attributes = null, order = ['id', 'desc']) {
+    async findOneByWhere(where, attributes = null) {
         if (attributes == null) {
             return this.Model.findOne({
-                where,
-                order: [order],
+                where
             })
                 .then((result) => {
+                    console.log('findOneByWhere attr null => '. result)
                     return result;
                 })
                 .catch((e) => {
@@ -43,10 +43,10 @@ class SuperDao {
         }
         return this.Model.findOne({
             where,
-            attributes,
-            order: [order],
+            attributes
         })
             .then((result) => {
+                console.log('findOneByWhere with attr => '. result)
                 return result;
             })
             .catch((e) => {

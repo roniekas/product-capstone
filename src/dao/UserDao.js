@@ -1,23 +1,20 @@
 const SuperDao = require('./SuperDao');
 const models = require('../models');
 
-const User = models.user;
+const User = models.User;
 
 class UserDao extends SuperDao {
     constructor() {
         super(User);
     }
 
-    async findByEmail(email) {
-        return User.findOne({ where: { email } });
+    async findByUsername(username) {
+        return User.findOne({ where: { username } });
     }
 
-    async isEmailExists(email) {
-        return User.count({ where: { email } }).then((count) => {
-            if (count != 0) {
-                return true;
-            }
-            return false;
+    async isUsernameExists(username) {
+        return User.count({ where: { username } }).then((count) => {
+            return count !== 0;
         });
     }
 

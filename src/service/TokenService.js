@@ -40,7 +40,6 @@ class TokenService {
                 return decoded;
             }
         });
-
         const tokenDoc = await this.tokenDao.findOne({
             token,
             type,
@@ -92,28 +91,28 @@ class TokenService {
      */
     generateAuthTokens = async (user) => {
         const accessTokenExpires = moment().add(config.jwt.accessExpirationMinutes, 'minutes');
-        const accessToken = await this.generateToken(
-            user.uuid,
+        const accessToken = this.generateToken(
+            user.userId,
             accessTokenExpires,
             tokenTypes.ACCESS,
         );
         const refreshTokenExpires = moment().add(config.jwt.refreshExpirationDays, 'days');
-        const refreshToken = await this.generateToken(
-            user.uuid,
+        const refreshToken = this.generateToken(
+            user.userId,
             refreshTokenExpires,
             tokenTypes.REFRESH,
         );
         const authTokens = [];
         authTokens.push({
             token: accessToken,
-            user_uuid: user.uuid,
+            user_uuid: user.userId,
             expires: accessTokenExpires.toDate(),
             type: tokenTypes.ACCESS,
             blacklisted: false,
         });
         authTokens.push({
             token: refreshToken,
-            user_uuid: user.uuid,
+            user_uuid: user.userId,
             expires: refreshTokenExpires.toDate(),
             type: tokenTypes.REFRESH,
             blacklisted: false,
@@ -144,7 +143,7 @@ class TokenService {
                 expires: refreshTokenExpires.toDate(),
             },
         };
-        await this.redisService.createTokens(user.uuid, tokens);
+        this.redisService.createTokens(user.userId, tokens);
 
         return tokens;
     };

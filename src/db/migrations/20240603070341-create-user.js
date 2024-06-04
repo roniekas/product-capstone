@@ -13,7 +13,7 @@ module.exports = {
         allowNull: false
       },
       pin: {
-        type: Sequelize.INTEGER(6),
+        type: Sequelize.STRING(6),
         allowNull: false
       },
       name: {

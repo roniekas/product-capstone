@@ -14,15 +14,45 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Token.init({
-    token: DataTypes.STRING,
-    user_uuid: DataTypes.UUID,
-    type: DataTypes.STRING,
-    expires: DataTypes.DATE,
-    blacklisted: DataTypes.BOOLEAN
+    id: {
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      primaryKey: true,
+      allowNull: false,
+    },
+    token: {
+      type: DataTypes.STRING,
+    },
+    user_uuid: {
+      type: DataTypes.UUID,
+      allowNull: false,
+    },
+    type: {
+      type: DataTypes.STRING,
+    },
+    blacklisted: {
+      type: DataTypes.BOOLEAN,
+    },
+    expires: {
+      type: DataTypes.DATE,
+      allowNull: false,
+    },
+    created_at: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: DataTypes.NOW,
+    },
+    updated_at: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: DataTypes.NOW,
+    },
   }, {
     sequelize,
     modelName: 'Token',
-    underscored: true,
+    tableName: 'Tokens',
+    timestamps: false,  // Disable default timestamps (createdAt, updatedAt)
+    underscored: true,  // Use snake_case column names
   });
   return Token;
 };

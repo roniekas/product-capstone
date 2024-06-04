@@ -16,28 +16,31 @@ class AuthService {
 
     /**
      * Create a user
-     * @param {String} email
-     * @param {String} password
+     * @param {String} username
+     * @param {String} pin
      * @returns {Promise<{response: {code: *, message: *, status: boolean}, statusCode: *}>}
      */
-    loginWithEmailPassword = async (email, password) => {
+    loginWithUserPin = async (username, pin) => {
         try {
             let message = 'Login Successful';
             let statusCode = httpStatus.OK;
-            let user = await this.userDao.findByEmail(email);
+            let user = await this.userDao.findByUsername(username);
             if (user == null) {
                 return responseHandler.returnError(
                     httpStatus.BAD_REQUEST,
-                    'Invalid Email Address!',
+                    'Invalid Username!',
                 );
             }
-            const isPasswordValid = await bcrypt.compare(password, user.password);
+
+            const isPasswordValid = pin === user.pin;
             user = user.toJSON();
-            delete user.password;
+            delete user.pin;
+            delete user.createdAt;
+            delete user.updatedAt;
 
             if (!isPasswordValid) {
                 statusCode = httpStatus.BAD_REQUEST;
-                message = 'Wrong Password!';
+                message = 'Wrong Pin!';
                 return responseHandler.returnError(statusCode, message);
             }
 
@@ -49,6 +52,7 @@ class AuthService {
     };
 
     logout = async (req, res) => {
+        if(!req.body.refresh_token || !req.body.access_token) return false;
         const refreshTokenDoc = await this.tokenDao.findOne({
             token: req.body.refresh_token,
             type: tokenTypes.REFRESH,
@@ -67,8 +71,8 @@ class AuthService {
             type: tokenTypes.ACCESS,
             blacklisted: false,
         });
-        await this.redisService.removeToken(req.body.access_token, 'access_token');
-        await this.redisService.removeToken(req.body.refresh_token, 'refresh_token');
+        this.redisService.removeToken(req.body.access_token, 'access_token');
+        this.redisService.removeToken(req.body.refresh_token, 'refresh_token');
         return true;
     };
 }

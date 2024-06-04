@@ -1,7 +1,7 @@
 const SuperDao = require('./SuperDao');
 const models = require('../models');
 
-const Token = models.token;
+const Token = models.Token;
 
 class TokenDao extends SuperDao {
     constructor() {
@@ -15,6 +15,7 @@ class TokenDao extends SuperDao {
     async remove(where) {
         return Token.destroy({ where });
     }
+
 }
 
 module.exports = TokenDao;

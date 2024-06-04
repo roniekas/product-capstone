@@ -6,11 +6,8 @@ class UserValidator {
     async userCreateValidator(req, res, next) {
         // create schema object
         const schema = Joi.object({
-            email: Joi.string().email().required(),
-            password: Joi.string().min(6).required(),
-            confirm_password: Joi.string().valid(Joi.ref('password')).required(),
-            first_name: Joi.string(),
-            last_name: Joi.string(),
+            userName: Joi.string(),
+            userPin: Joi.string(),
         });
 
         // schema options
@@ -41,8 +38,8 @@ class UserValidator {
     async userLoginValidator(req, res, next) {
         // create schema object
         const schema = Joi.object({
-            email: Joi.string().email().required(),
-            password: Joi.string().min(6).required(),
+            username: Joi.string().required(),
+            pin: Joi.string().min(6).required(),
         });
 
         // schema options
@@ -102,12 +99,12 @@ class UserValidator {
     }
 
     // eslint-disable-next-line class-methods-use-this
-    async changePasswordValidator(req, res, next) {
+    async changePindValidator(req, res, next) {
         // create schema object
         const schema = Joi.object({
-            old_password: Joi.string().required(),
-            password: Joi.string().min(6).required(),
-            confirm_password: Joi.string().min(6).required(),
+            oldPin: Joi.string().required(),
+            pin: Joi.string().required(),
+            confirmPin: Joi.string().required(),
         });
 
         // schema options
