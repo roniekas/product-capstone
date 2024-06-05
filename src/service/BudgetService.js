@@ -21,7 +21,6 @@ class BudgetService {
             const userBody = req.body;
             const userId = req.user.userId ?? '';
             let message = 'Successfully Create Budget!';
-            console.log({ userBody });
             let {category, startDate, endDate} = userBody;
             if (await this.budgetDao.isBudgetExists(userId, category, startDate, endDate)) {
                 return responseHandler.returnError(httpStatus.BAD_REQUEST, 'Budget Already Exist!');
@@ -29,15 +28,7 @@ class BudgetService {
 
             userBody.budgetId = uuidv4();
             userBody.userId = userId;
-            // userBody.startDate = {
-            //     [Op.eq]: moment(startDate).utc().format('YYYY-MM-DD')
-            // }
-            // userBody.endDate = {
-            //     [Op.eq]: moment(endDate).utc().format('YYYY-MM-DD')
-            // }
             userBody.spendingAmount = 0;
-
-            console.log({ userBody });
 
             let budgetData = await this.budgetDao.create(userBody);
 
@@ -56,6 +47,25 @@ class BudgetService {
             return responseHandler.returnError(httpStatus.BAD_REQUEST, 'Something went wrong!');
         }
     };
+
+    getAllBudget = async (req) => {
+        try {
+            let message = 'Successfully Getting Budget!';
+            const userId = req.user.userId ?? '';
+            const allData = await this.budgetDao.findByWhere({
+                where: {userId},
+                order: [
+                    ['userId', 'ASC'],
+                ],
+            });
+
+            console.log({ allData })
+            return responseHandler.returnSuccess(httpStatus.CREATED, message, allData);
+        } catch (e) {
+            logger.error(e);
+            return responseHandler.returnError(httpStatus.BAD_REQUEST, 'Something went wrong!');
+        }
+    }
 }
 
 module.exports = BudgetService;

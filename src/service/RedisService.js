@@ -66,11 +66,9 @@ class RedisService {
      * @returns {boolean}
      */
     setUser = async (user) => {
-        const setUser = await this.redisHelper.set(`user:${user.uuid}`, JSON.stringify(user));
-        if (!setUser) {
-            return true;
-        }
-        return false;
+        const setUser = await this.redisHelper.set(`user:${user.userId}`, JSON.stringify(user));
+        return !setUser;
+
     };
 }
 

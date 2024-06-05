@@ -11,6 +11,7 @@ const budgetValidator = new BudgetValidator();
 router.get(
     '/',
     auth(),
+    budgetController.getAllBudget
 );
 router.post(
     '/',

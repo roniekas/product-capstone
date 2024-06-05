@@ -1,7 +1,7 @@
 const SuperDao = require('./SuperDao');
 const models = require('../models');
 const moment = require('moment');
-const { Op } = require('sequelize');
+const { Op, Sequelize } = require('sequelize');
 
 const Budget = models.Budget;
 
@@ -10,22 +10,19 @@ class BudgetDao extends SuperDao {
         super(Budget);
     }
 
-    async findByUsername(username) {
-        return Budget.findOne({ where: { username } });
-    }
-
-    async isBudgetExists(userId, category, cvStartDate, cvEndDate) {
-        const condition = {
-            userId,
-            category,
-            startDate: {
-                [Op.eq]: moment(cvStartDate).utc().format('YYYY-MM-DD')
+    async isBudgetExists(userId, category, startDate, endDate) {
+        return Budget.count({
+            where: {
+                userId,
+                category,
+                startDate: {
+                    [Sequelize.Op.eq]: Sequelize.literal(`DATE('${startDate}')`), // Use Sequelize.literal to prevent conversion
+                },
+                endDate: {
+                    [Sequelize.Op.eq]: Sequelize.literal(`DATE('${endDate}')`), // Use Sequelize.literal to prevent conversion
+                },
             },
-            endDate: {
-                [Op.eq]: moment(cvEndDate).utc().format('YYYY-MM-DD')
-            }
-        }
-        return Budget.count({ where: condition }).then((count) => {
+        }).then((count) => {
             return count !== 0;
         });
     }

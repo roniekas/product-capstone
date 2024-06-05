@@ -19,6 +19,18 @@ class BudgetController {
             res.status(httpStatus.BAD_GATEWAY).send(e);
         }
     };
+
+    getAllBudget = async (req, res) => {
+        try {
+            const user = await this.budgetService.getAllBudget(req);
+
+            const { status, message, data } = user.response;
+            res.status(user.statusCode).send({ status, message, data });
+        } catch (e) {
+            logger.error(e);
+            res.status(httpStatus.BAD_GATEWAY).send(e);
+        }
+    }
 }
 
 module.exports = BudgetController;
