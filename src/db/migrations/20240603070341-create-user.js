@@ -28,6 +28,11 @@ module.exports = {
         type: Sequelize.STRING(50),
         allowNull: true
       },
+      isPremium: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+        defaultValue: false
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,

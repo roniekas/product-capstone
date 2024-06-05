@@ -58,6 +58,11 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING(50),
       allowNull: true
     },
+    isPremium: {
+      type: DataTypes.BOOL,
+      allowNull: false,
+      defaultValue: false
+    },
     createdAt: {
       allowNull: false,
       type: DataTypes.DATE,
