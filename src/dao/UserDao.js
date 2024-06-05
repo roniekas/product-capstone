@@ -18,8 +18,8 @@ class UserDao extends SuperDao {
         });
     }
 
-    async createWithTransaction(user, transaction) {
-        return User.create(user, { transaction });
+    async findAll(){
+        return User.findAll();
     }
 }
 
