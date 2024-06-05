@@ -16,7 +16,7 @@ router.post(
     '/',
     auth(),
     budgetValidator.createBudgetValidator,
-    budgetController
+    budgetController.newBudget
 );
 router.put(
     '/',

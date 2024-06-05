@@ -13,7 +13,7 @@ class BudgetController {
             const user = await this.budgetService.createBudget(req);
 
             const { status, message, data } = user.response;
-            res.status(user.statusCode).send({ status, message, data, tokens });
+            res.status(user.statusCode).send({ status, message, data });
         } catch (e) {
             logger.error(e);
             res.status(httpStatus.BAD_GATEWAY).send(e);

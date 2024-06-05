@@ -7,19 +7,19 @@ module.exports = {
 
     // Add the 'startDate' and 'endDate' columns
     await queryInterface.addColumn('Budgets', 'startDate', {
-      type: Sequelize.DATE,
+      type: Sequelize.DATEONLY,
       allowNull: false
     });
 
     await queryInterface.addColumn('Budgets', 'endDate', {
-      type: Sequelize.DATE,
+      type: Sequelize.DATEONLY,
       allowNull: false
     });
   },
 
   async down (queryInterface, Sequelize) {
     await queryInterface.addColumn('Budgets', 'date', {
-      type: Sequelize.DATE,
+      type: Sequelize.DATEONLY,
       allowNull: false
     });
 

@@ -3,6 +3,8 @@ const { v4: uuidv4 } = require('uuid');
 const BudgetDao = require('../dao/BudgetDao');
 const responseHandler = require('../helper/responseHandler');
 const logger = require('../config/logger');
+const { Op } = require('sequelize');
+const moment = require('moment/moment');
 
 class BudgetService {
     constructor() {
@@ -19,14 +21,23 @@ class BudgetService {
             const userBody = req.body;
             const userId = req.user.userId ?? '';
             let message = 'Successfully Create Budget!';
-            const {category, startDate, endDate} = userBody;
+            console.log({ userBody });
+            let {category, startDate, endDate} = userBody;
             if (await this.budgetDao.isBudgetExists(userId, category, startDate, endDate)) {
                 return responseHandler.returnError(httpStatus.BAD_REQUEST, 'Budget Already Exist!');
             }
 
             userBody.budgetId = uuidv4();
             userBody.userId = userId;
+            // userBody.startDate = {
+            //     [Op.eq]: moment(startDate).utc().format('YYYY-MM-DD')
+            // }
+            // userBody.endDate = {
+            //     [Op.eq]: moment(endDate).utc().format('YYYY-MM-DD')
+            // }
             userBody.spendingAmount = 0;
+
+            console.log({ userBody });
 
             let budgetData = await this.budgetDao.create(userBody);
 

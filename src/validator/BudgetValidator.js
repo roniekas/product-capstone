@@ -9,7 +9,7 @@ class UserValidator {
             category: Joi.string().required(),
             amount: Joi.string().required(),
             startDate: Joi.string().required(),
-            endtDate: Joi.string().required(),
+            endDate: Joi.string().required(),
             walletId: Joi.string().required(),
         });
 
