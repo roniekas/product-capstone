@@ -37,20 +37,18 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING(255),
       allowNull: false
     },
-    date: {
-      type: DataTypes.DATE,
-      allowNull: true
-    },
     walletId: {
       type: DataTypes.STRING(255),
       allowNull: false
     },
     amount: {
       type: DataTypes.INTEGER,
+      allowNull: false,
       defaultValue: 0
     },
     spendingAmount: {
       type: DataTypes.INTEGER,
+      allowNull: true,
       defaultValue: 0
     },
     createdAt: {
@@ -62,6 +60,14 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       type: DataTypes.DATE,
       defaultValue: DataTypes.NOW
+    },
+    startDate: {
+      type: DataTypes.DATE,
+      allowNull: false
+    },
+    endDate: {
+      type: DataTypes.DATE,
+      allowNull: false
     }
   }, {
     sequelize,
