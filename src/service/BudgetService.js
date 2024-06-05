@@ -52,14 +52,8 @@ class BudgetService {
         try {
             let message = 'Successfully Getting Budget!';
             const userId = req.user.userId ?? '';
-            const allData = await this.budgetDao.findByWhere({
-                where: {userId},
-                order: [
-                    ['userId', 'ASC'],
-                ],
-            });
+            const allData = await this.budgetDao.findByWhere({userId});
 
-            console.log({ allData })
             return responseHandler.returnSuccess(httpStatus.CREATED, message, allData);
         } catch (e) {
             logger.error(e);
