@@ -59,7 +59,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: true
     },
     isPremium: {
-      type: DataTypes.BOOL,
+      type: DataTypes.BOOLEAN,
       allowNull: false,
       defaultValue: false
     },
