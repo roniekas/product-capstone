@@ -31,6 +31,31 @@ class BudgetController {
             res.status(httpStatus.BAD_GATEWAY).send(e);
         }
     }
+
+    updateBudget = async (req, res) => {
+        try {
+            const user = await this.budgetService.updateBudget(req);
+
+            const { status, message, data } = user.response;
+            res.status(user.statusCode).send({ status, message, data });
+        } catch (e) {
+            logger.error(e);
+            res.status(httpStatus.BAD_GATEWAY).send(e);
+        }
+    }
+
+    deleteBudget = async (req, res) => {
+        try {
+            const budgetId = req.query.budgetId ?? '';
+            const user = await this.budgetService.removeById(budgetId);
+
+            const { status, message } = user.response;
+            res.status(user.statusCode).send({ status, message });
+        } catch (e) {
+            logger.error(e);
+            res.status(httpStatus.BAD_GATEWAY).send(e);
+        }
+    }
 }
 
 module.exports = BudgetController;

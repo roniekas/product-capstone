@@ -60,6 +60,53 @@ class BudgetService {
             return responseHandler.returnError(httpStatus.BAD_REQUEST, 'Something went wrong!');
         }
     }
+
+    updateBudget = async ( req ) => {
+        try {
+            let message = 'Successfully Update Budget!';
+            const data = req.body;
+            const { budgetId } = data;
+            let allData = await this.budgetDao.findOneByWhere({budgetId});
+
+            if(allData){
+                console.log({ data })
+                const {category, amount, startDate, endDate, walletId} = data;
+                const isSuccess = await this.budgetDao.updateWhere(
+                    { category, amount, startDate, endDate, walletId },
+                    { budgetId },
+                );
+                if(isSuccess){
+                    return responseHandler.returnSuccess(httpStatus.CREATED, message, data);
+                }
+            } else if (!allData) {
+                message = "Budget not found!"
+                return responseHandler.returnSuccess(httpStatus.BAD_REQUEST, message, allData);
+            }
+
+            message = "Failed Update Budget!"
+            return responseHandler.returnError(httpStatus.BAD_GATEWAY, message);
+        } catch (e) {
+            logger.error(e);
+            return responseHandler.returnError(httpStatus.BAD_REQUEST, 'Something went wrong!');
+        }
+    }
+
+    removeById = async (budgetId) => {
+        try {
+            let message = 'Successfully Delete Budget!';
+
+            let data = await this.budgetDao.removeBudget(budgetId);
+            if(data){
+                return responseHandler.returnSuccess(httpStatus.OK, message, data);
+            } else {
+                message = 'Failed Delete Budget!';
+                return responseHandler.returnError(httpStatus.BAD_GATEWAY, message);
+            }
+        } catch (e) {
+            logger.error(e);
+            return responseHandler.returnError(httpStatus.BAD_REQUEST, 'Something went wrong!');
+        }
+    }
 }
 
 module.exports = BudgetService;

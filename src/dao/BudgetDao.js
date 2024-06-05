@@ -26,6 +26,12 @@ class BudgetDao extends SuperDao {
             return count !== 0;
         });
     }
+
+    async removeBudget(budgetId){
+        return await Budget.destroy({
+            where: { budgetId }
+        })
+    }
 }
 
 module.exports = BudgetDao;

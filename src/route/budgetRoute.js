@@ -22,10 +22,13 @@ router.post(
 router.put(
     '/',
     auth(),
+    budgetValidator.updateBudgetValidator,
+    budgetController.updateBudget
 );
 router.delete(
     '/',
     auth(),
+    budgetController.deleteBudget
 );
 
 module.exports = router;
