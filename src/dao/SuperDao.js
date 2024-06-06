@@ -97,14 +97,13 @@ class SuperDao {
     async findByWhere(
         where,
         attributes = undefined,
-        order = ['id', 'asc'],
+        order = ['userId', 'asc'],
         limit = null,
         offset = null,
     ) {
         if (!attributes) {
             return this.Model.findAll({
                 where,
-                order: [order],
                 limit,
                 offset,
             });
@@ -113,7 +112,6 @@ class SuperDao {
         return this.Model.findAll({
             where,
             attributes,
-            order: [order],
             limit,
             offset,
         });

@@ -2,7 +2,7 @@ const Joi = require('joi');
 const httpStatus = require('http-status');
 const ApiError = require('../helper/ApiError');
 
-class UserValidator {
+class BudgetValidator {
     async userCreateValidator(req, res, next) {
         // create schema object
         const schema = Joi.object({
@@ -133,4 +133,4 @@ class UserValidator {
     }
 }
 
-module.exports = UserValidator;
+module.exports = BudgetValidator;
