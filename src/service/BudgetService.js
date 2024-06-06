@@ -107,6 +107,23 @@ class BudgetService {
             return responseHandler.returnError(httpStatus.BAD_REQUEST, 'Something went wrong!');
         }
     }
+
+    getBudgetById = async (budgetId) => {
+        try {
+            let message = 'Successfully Delete Budget!';
+
+            let data = await this.budgetDao.findOneByWhere({budgetId});
+            if(data){
+                return responseHandler.returnSuccess(httpStatus.OK, message, data);
+            } else {
+                message = 'Failed Delete Budget!';
+                return responseHandler.returnError(httpStatus.BAD_GATEWAY, message);
+            }
+        } catch (e) {
+            logger.error(e);
+            return responseHandler.returnError(httpStatus.BAD_REQUEST, 'Something went wrong!');
+        }
+    }
 }
 
 module.exports = BudgetService;

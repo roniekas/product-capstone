@@ -6,6 +6,7 @@ const logger = require('../config/logger');
 class ActivityController {
     constructor() {
         this.activityService = new ActivityService();
+        this.budgetService = new BudgetService();
     }
 
     register = async (req, res) => {
@@ -15,6 +16,8 @@ class ActivityController {
             if(!userId){
                 res.status(404).send({"success": false, "message": "user not found!"})
             }
+
+            const isWalletExist = this.budgetService.getBudgetById()
 
             const user = await this.activityService.createUser(req.body);
             let tokens = {};

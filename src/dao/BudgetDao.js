@@ -1,7 +1,7 @@
 const SuperDao = require('./SuperDao');
 const models = require('../models');
 const moment = require('moment');
-const { Op, Sequelize } = require('sequelize');
+const { Sequelize } = require('sequelize');
 
 const Budget = models.Budget;
 
