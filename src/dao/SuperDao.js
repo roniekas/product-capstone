@@ -28,31 +28,22 @@ class SuperDao {
     }
 
     async findOneByWhere(where, attributes = null) {
-        if (attributes == null) {
-            return this.Model.findOne({
+        try {
+            const options = {
                 where
-            })
-                .then((result) => {
-                    console.log('findOneByWhere attr null => '. result)
-                    return result;
-                })
-                .catch((e) => {
-                    logger.error(e);
-                    console.log(e);
-                });
+            };
+
+            if (attributes !== null) {
+                options.attributes = attributes;
+            }
+
+            const result = await this.Model.findOne(options);
+            return result; // This will return the found result or null if no record is found
+        } catch (e) {
+            logger.error(e);
+            console.error(e);
+            throw e; // Re-throw the error to be handled by the calling function
         }
-        return this.Model.findOne({
-            where,
-            attributes
-        })
-            .then((result) => {
-                console.log('findOneByWhere with attr => '. result)
-                return result;
-            })
-            .catch((e) => {
-                logger.error(e);
-                console.log(e);
-            });
     }
 
     async updateWhere(data, where) {

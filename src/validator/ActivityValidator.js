@@ -6,13 +6,14 @@ class ActivityValidator {
     async createActivityValidator(req, res, next) {
         // create schema object
         const schema = Joi.object({
-            avtivityType: Joi.bool().required(),
+            amount: Joi.number().default(0),
+            activityType: Joi.string().valid('income', 'outcome').required(),
             category: Joi.string().required(),
             notes: Joi.string().allow(""),
             date: Joi.string().required(),
             walletId: Joi.string().required(),
             iconId: Joi.string().allow(""),
-            billId: Joi.string().required()
+            billId: Joi.string().allow("")
         });
 
         // schema options

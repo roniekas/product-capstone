@@ -73,6 +73,38 @@ class WalletService {
             return responseHandler.returnError(httpStatus.BAD_REQUEST, 'Something went wrong!');
         }
     }
+
+
+    getWalletById = async (walletId) => {
+        try {
+            let message = 'This is the all wallet';
+            const isWalletExist = await this.walletDao.findOneByWhere({walletId});
+            if(isWalletExist){
+                return responseHandler.returnSuccess(httpStatus.OK, message, isWalletExist);
+            } else {
+                return responseHandler.returnError(httpStatus.BAD_REQUEST, 'Wallet not found');
+            }
+        } catch (e) {
+            logger.error(e);
+            return responseHandler.returnError(httpStatus.BAD_REQUEST, 'Something went wrong!');
+        }
+    }
+
+    updateBalance = async (data, walletId) => {
+        try {
+            let message = 'This is the all wallet';
+            const isWalletExist = await this.walletDao.updateWhere(data, { walletId });
+
+            if(isWalletExist){
+                return responseHandler.returnSuccess(httpStatus.OK, message, isWalletExist);
+            } else {
+                return responseHandler.returnError(httpStatus.BAD_REQUEST, 'Wallet not found');
+            }
+        } catch (e) {
+            logger.error(e);
+            return responseHandler.returnError(httpStatus.BAD_REQUEST, 'Something went wrong!');
+        }
+    }
 }
 
 module.exports = WalletService;

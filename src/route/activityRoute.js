@@ -12,7 +12,7 @@ router.post(
     '/',
     auth(),
     activityValidator.createActivityValidator,
-
+    activityController.addNewActivity
 );
 
 module.exports = router;

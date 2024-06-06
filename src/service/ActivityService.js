@@ -1,44 +1,46 @@
 const httpStatus = require('http-status');
-const bcrypt = require('bcryptjs');
 const { v4: uuidv4 } = require('uuid');
-const UserDao = require('../dao/UserDao');
+const WalletDao = require('../dao/WalletDao');
+const ActivityDao = require('../dao/ActivityDao');
 const responseHandler = require('../helper/responseHandler');
 const logger = require('../config/logger');
-const { userConstant } = require('../config/constant');
 
 class ActivityService {
     constructor() {
-        this.userDao = new UserDao();
+        this.walletDao = new WalletDao();
+        this.activityDao= new ActivityDao();
     }
 
     /**
      * Create a user
      * @param {Object} userBody
+     * @param {string} userId
      * @returns {Object}
      */
-    createUser = async (userBody) => {
+    createActivity = async (userBody, userId) => {
         try {
-            let message = 'Successfully Registered the account!';
-            if (await this.userDao.isUsernameExists(userBody.userName)) {
-                return responseHandler.returnError(httpStatus.BAD_REQUEST, 'Username Already Taken!');
-            }
-            userBody.userId = uuidv4();
-            userBody.username = userBody.userName;
-            userBody.pin = userBody.userPin;
+            let message = 'Successfully Create new Activity!';
 
-            let userData = await this.userDao.create(userBody);
+            userBody.userId = userId;
+            userBody.activityId = uuidv4();
+            userBody.activityType = userBody.activityType === 'income';
 
-            if (!userData) {
+            let activityData = await this.activityDao.create(userBody);
+
+            if (!activityData) {
                 message = 'Registration Failed! Please Try again.';
                 return responseHandler.returnError(httpStatus.BAD_REQUEST, message);
             }
-          
-            userData = userData.toJSON();
-            delete userData.password;
-            delete userData.createdAt;
-            delete userData.updatedAt;
 
-            return responseHandler.returnSuccess(httpStatus.CREATED, message, userData);
+            activityData = activityData.toJSON();
+            console.log({ activityData });
+
+            delete activityData.createdAt;
+            delete activityData.updatedAt;
+
+            activityData.activityType = activityData.activityType ? 'income' : 'outcome';
+
+            return responseHandler.returnSuccess(httpStatus.CREATED, message, activityData);
         } catch (e) {
             logger.error(e);
             return responseHandler.returnError(httpStatus.BAD_REQUEST, 'Something went wrong!');
