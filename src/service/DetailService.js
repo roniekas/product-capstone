@@ -27,6 +27,21 @@ class DetailService {
             return responseHandler.returnError(httpStatus.BAD_REQUEST, 'Something went wrong!');
         }
     };
+
+    searchTransaction = async (req) => {
+        try {
+            let message = 'nih';
+            const userId = req.user.userId ?? '';
+            let { key, type, category } = req.body;
+
+            let activityData = await this.detailDao.search(userId, key, type, category);
+
+            return responseHandler.returnSuccess(httpStatus.CREATED, message, activityData);
+        } catch (e) {
+            logger.error(e);
+            return responseHandler.returnError(httpStatus.BAD_REQUEST, 'Something went wrong!');
+        }
+    };
 }
 
 module.exports = DetailService;

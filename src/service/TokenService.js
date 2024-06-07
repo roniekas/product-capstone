@@ -132,6 +132,7 @@ class TokenService {
             },
             type: tokenTypes.REFRESH,
         };
+        console.log({ expiredRefreshTokenWhere })
         await this.tokenDao.remove(expiredRefreshTokenWhere);
         const tokens = {
             access: {

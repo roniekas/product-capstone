@@ -8,6 +8,7 @@ module.exports = {
         host: config.dbHost,
         port: config.dbPort,
         dialect: 'mysql',
+        timezone: '+07:00',
         dialectOptions: {
             bigNumberStrings: true,
         },
@@ -18,6 +19,7 @@ module.exports = {
         database: config.dbName,
         host: config.dbHost,
         dialect: 'mysql',
+        timezone: '+07:00',
         dialectOptions: {
             bigNumberStrings: true,
         },
@@ -29,6 +31,7 @@ module.exports = {
         host: config.dbHost,
         port: config.port,
         dialect: 'mysql',
+        timezone: '+07:00',
         dialectOptions: {
             bigNumberStrings: true,
         },

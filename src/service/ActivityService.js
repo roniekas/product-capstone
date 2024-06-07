@@ -33,7 +33,6 @@ class ActivityService {
             }
 
             activityData = activityData.toJSON();
-            console.log({ activityData });
 
             delete activityData.createdAt;
             delete activityData.updatedAt;

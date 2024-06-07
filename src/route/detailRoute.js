@@ -15,4 +15,11 @@ router.post(
     detailController.detailTransaction
 );
 
+router.post(
+    '/search',
+    auth(),
+    detailValidator.searchValidator,
+    detailController.searchTransaction
+);
+
 module.exports = router;

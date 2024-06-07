@@ -2,7 +2,7 @@ const SuperDao = require('./SuperDao');
 const models = require('../models');
 const { Sequelize } = require('sequelize');
 const moment = require('moment');
-const { reformatActivity } = require('../helper/general');
+const { reformatActivity, getDateRange } = require('../helper/general');
 
 const Activity = models.Activity;
 
@@ -122,6 +122,37 @@ class DetailDao extends SuperDao {
 
             return dailyData;
         }
+    }
+
+    search = async (userId, key, type, category) => {
+        const date = getDateRange('year');
+        const [{startDate, endDate}] = date;
+        return await Activity.findAll({
+            attributes: [
+                [Sequelize.fn('DATE', Sequelize.col('date')), 'date'],
+                'category',
+                'notes',
+                'amount',
+            ],
+            where: {
+                userId,
+                date: {
+                    [Sequelize.Op.gte]: Sequelize.literal(`DATE('${startDate}')`),
+                    [Sequelize.Op.lte]: Sequelize.literal(`DATE('${endDate}')`),
+                },
+                [Sequelize.Op.or]: [
+                    key === '' && category !== '' ? { category: { [Sequelize.Op.like]: `%${category}%` } } : null,
+                    key !== '' && category === '' ? { notes: { [Sequelize.Op.like]: `%${key}%` } } : null,
+                    {
+                        [Sequelize.Op.and]: [
+                            { notes: { [Sequelize.Op.like]: `%${key}%` } },
+                            { category: { [Sequelize.Op.like]: `%${category}%` } },
+                        ],
+                    },
+                ],
+                activityType: type === 'all' || type === "" ? [0, 1] : type === "income"
+            }
+        });
     }
 }
 
