@@ -36,6 +36,18 @@ class DetailController {
             res.status(httpStatus.BAD_GATEWAY).send(e);
         }
     };
+
+    homePage = async (req, res) => {
+        try {
+            const user = await this.detailService.homePage(req);
+
+            const { status, message, data } = user.response;
+            res.status(user.statusCode).send({ status, message, data });
+        } catch (e) {
+            logger.error(e);
+            res.status(httpStatus.BAD_GATEWAY).send(e);
+        }
+    };
 }
 
 module.exports = DetailController;

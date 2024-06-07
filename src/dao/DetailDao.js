@@ -2,13 +2,16 @@ const SuperDao = require('./SuperDao');
 const models = require('../models');
 const { Sequelize } = require('sequelize');
 const moment = require('moment');
-const { reformatActivity, getDateRange } = require('../helper/general');
+const { reformatActivity, getDateRange, generateStartAndEndDate } = require('../helper/general');
+const WalletDao = require('./WalletDao');
 
 const Activity = models.Activity;
+const Wallet = models.Wallet;
 
 class DetailDao extends SuperDao {
     constructor() {
         super(Activity);
+        this.walletDao = new WalletDao();
     }
 
     detailedSearch = async (userId, startDate, endDate, byCategory = true, type = 'all') => {
@@ -153,6 +156,73 @@ class DetailDao extends SuperDao {
                 activityType: type === 'all' || type === "" ? [0, 1] : type === "income"
             }
         });
+    }
+
+    home = async (userId, date) => {
+        const { startDate, endDate } = generateStartAndEndDate(date);
+        const activities = await Activity.findAll({
+            attributes: [
+                'activityType',
+                'category',
+                'notes',
+                'amount',
+                'walletId',
+            ],
+            where: {
+                userId,
+                date: {
+                    [Sequelize.Op.gte]: startDate,
+                    [Sequelize.Op.lte]: endDate,
+                },
+            },
+            order: [[Sequelize.col('amount'), 'DESC']],
+        });
+
+        if (!activities.length) {
+            return {
+                income: 0,
+                outcome: 0,
+                monthSummary: 0,
+                topActivities: [],
+                topUsedWallets: [],
+            };
+        }
+
+        const income = activities.reduce((acc, activity) => (activity.activityType ? acc + activity.amount : acc), 0);
+        const outcome = activities.reduce((acc, activity) => (!activity.activityType ? acc + activity.amount : acc), 0);
+        const topActivities = activities.slice(0, 5);
+
+        const walletCounts = activities.reduce((acc, activity) => {
+            const walletId = activity.walletId;
+            acc[walletId] = (acc[walletId] || 0) + 1;
+            return acc;
+        }, {});
+
+        const topWalletIds = Object.entries(walletCounts)
+            .sort((a, b) => b[1] - a[1]) // Sort by count descending
+            .slice(0, 3) // Top 3 wallets
+            .map(([walletId]) => walletId);
+
+        const topUsedWallets = await Promise.all(
+            topWalletIds.map(async (walletId) => {
+                const wallet = await Wallet.findByPk(walletId);
+                return {
+                    id: wallet.walletId,
+                    name: wallet.walletName,
+                    balance: wallet.amount,
+                };
+            })
+        );
+
+        const monthSummary = income - outcome;
+
+        return {
+            income,
+            outcome,
+            monthSummary,
+            topActivities,
+            topUsedWallets,
+        };
     }
 }
 

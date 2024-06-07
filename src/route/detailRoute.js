@@ -22,4 +22,11 @@ router.post(
     detailController.searchTransaction
 );
 
+router.get(
+    '/home',
+    auth(),
+    detailValidator.homeValidator,
+    detailController.homePage
+);
+
 module.exports = router;

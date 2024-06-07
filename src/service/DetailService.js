@@ -42,6 +42,21 @@ class DetailService {
             return responseHandler.returnError(httpStatus.BAD_REQUEST, 'Something went wrong!');
         }
     };
+
+    homePage = async (req) => {
+        try {
+            let message = 'nih';
+            const userId = req.user.userId ?? '';
+            let { date } = req.query;
+
+            let activityData = await this.detailDao.home(userId, date);
+
+            return responseHandler.returnSuccess(httpStatus.CREATED, message, activityData);
+        } catch (e) {
+            logger.error(e);
+            return responseHandler.returnError(httpStatus.BAD_REQUEST, 'Something went wrong!');
+        }
+    };
 }
 
 module.exports = DetailService;

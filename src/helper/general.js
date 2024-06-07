@@ -94,12 +94,24 @@ const processActivityData = (dailyActivity, type, byCategory, isMoreThanOneMonth
     return processData();
 };
 
+const generateStartAndEndDate = (yearMonth) => {
+    let date = moment(yearMonth, 'YYYY-MM', true);
 
+    if (!date.isValid()) {
+        date = moment(yearMonth);
+        if (!date.isValid()) {
+            date = moment();
+        }
+    }
 
-
+    const startDate = date.startOf('month').format('YYYY-MM-DD');
+    const endDate = date.endOf('month').format('YYYY-MM-DD');
+    return { startDate, endDate };
+};
 
 module.exports = {
     getDateRange,
-    reformatActivity
+    reformatActivity,
+    generateStartAndEndDate
 };
 
