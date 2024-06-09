@@ -199,7 +199,7 @@ class DetailDao extends SuperDao {
         }, {});
 
         const topWalletIds = Object.entries(walletCounts)
-            .sort((a, b) => b[1] - a[1]) // Sort by count descending
+            .sort((a, b) => b[1] - a[1])
             .slice(0, 3) // Top 3 wallets
             .map(([walletId]) => walletId);
 
