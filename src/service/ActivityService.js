@@ -45,6 +45,19 @@ class ActivityService {
             return responseHandler.returnError(httpStatus.BAD_REQUEST, 'Something went wrong!');
         }
     };
+
+    createMany = async (datas) => {
+        try {
+            const data = "OK";
+            const message = "OK";
+            await this.activityDao.bulkCreate(datas);
+
+            return responseHandler.returnSuccess(httpStatus.CREATED, message, data);
+        } catch (e) {
+            logger.error(e);
+            return responseHandler.returnError(httpStatus.BAD_REQUEST, 'Something went wrong!');
+        }
+    };
 }
 
 module.exports = ActivityService;

@@ -6,6 +6,7 @@ const routes = require('./route');
 const { jwtStrategy } = require('./config/passport');
 const { errorConverter, errorHandler } = require('./middlewares/error');
 const ApiError = require('./helper/ApiError');
+const bodyParser = require('body-parser');
 
 process.env.PWD = process.cwd();
 
@@ -18,7 +19,8 @@ app.options('*', cors());
 app.use(express.static(`${process.env.PWD}/public`));
 
 app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
+app.use(express.json({limit: '50mb'}));
+app.use(express.urlencoded({limit: '50mb'}));
 
 // jwt authentication
 app.use(passport.initialize());

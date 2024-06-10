@@ -8,14 +8,18 @@ const auth = require('../middlewares/auth');
 const billController = new BillController();
 const billValidator = new BillValidator();
 
-router.get(
-    '/',
+router.post(
+    '/readImages',
     auth(),
+    billValidator.readImagesValidator,
+    billController.readImages
 );
 
 router.post(
-    '/',
+    '/processBill',
     auth(),
+    billValidator.saveBillValidator,
+    billController.saveBillController
 );
 
 module.exports = router;
