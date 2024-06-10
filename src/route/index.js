@@ -33,6 +33,10 @@ const defaultRoutes = [
         path: '/bill',
         route: billRoute,
     },
+    {
+        path: '/',
+        route: billRoute,
+    },
 ];
 
 defaultRoutes.forEach((route) => {

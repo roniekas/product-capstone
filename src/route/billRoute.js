@@ -22,4 +22,9 @@ router.post(
     billController.saveBillController
 );
 
+router.get(
+    '/',
+    billController.checkHealth
+);
+
 module.exports = router;

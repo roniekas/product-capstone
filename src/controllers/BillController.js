@@ -64,6 +64,10 @@ class BillController {
             res.status(httpStatus.BAD_GATEWAY).send(e);
         }
     }
+
+    checkHealth = async (req, res) => {
+        return res.status(httpStatus.OK).send({ "status": "OK", "message": "health check" });
+    }
 }
 
 module.exports = BillController;
