@@ -12,7 +12,7 @@ const envValidation = Joi.object()
         DB_USER: Joi.string().required(),
         DB_PASS: Joi.string().allow(''),
         DB_NAME: Joi.string().required(),
-        DB_PORT: Joi.number().required(),
+        DB_PORT: Joi.number().required().allow(''),
         JWT_SECRET: Joi.string().required().description('JWT secret key'),
         JWT_ACCESS_EXPIRATION_MINUTES: Joi.number()
             .default(30)
