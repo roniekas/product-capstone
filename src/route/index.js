@@ -5,6 +5,7 @@ const budgetRoute = require('./budgetRoute');
 const walletRoute = require('./walletRoute');
 const detailRoute = require('./detailRoute');
 const billRoute = require('./billRoute');
+const profileRoute = require('./profileRoute');
 
 const router = express.Router();
 
@@ -37,6 +38,10 @@ const defaultRoutes = [
         path: '/',
         route: billRoute,
     },
+    {
+        path: '/profile',
+        route: profileRoute
+    }
 ];
 
 defaultRoutes.forEach((route) => {

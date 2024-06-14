@@ -102,6 +102,37 @@ class UserService {
 
         return responseHandler.returnError(httpStatus.BAD_REQUEST, 'Password Update Failed!');
     };
+
+    changeUserData = async (data, userId) => {
+        let message = 'Login Successful';
+        let statusCode = httpStatus.OK;
+        let user = await this.userDao.findOneByWhere({ userId });
+
+        if (!user) {
+            return responseHandler.returnError(httpStatus.NOT_FOUND, 'User Not found!');
+        }
+
+        const updateUser = await this.userDao.updateWhere(
+            {
+                username: data.username,
+                name: data.name,
+                email: data.email,
+                phoneNumber: data.phoneNumber,
+                isPremium: data.isPremium,
+            },
+            { userId },
+        );
+
+        if (updateUser) {
+            return responseHandler.returnSuccess(
+                httpStatus.OK,
+                'Profile updated Successfully!',
+                {},
+            );
+        }
+
+        return responseHandler.returnError(httpStatus.BAD_REQUEST, 'Password Update Failed!');
+    };
 }
 
 module.exports = UserService;
