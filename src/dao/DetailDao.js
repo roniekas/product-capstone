@@ -88,7 +88,12 @@ class DetailDao extends SuperDao {
                 }
             }
 
-            return monthlyData;
+            const monthlyArray = Object.keys(monthlyData).map(monthKey => ({
+                date: monthKey,
+                ...monthlyData[monthKey]
+            }));
+
+            return monthlyArray;
         } else {
             const dailyData = dailyActivity.reduce((acc, activity) => {
                 const key = moment(activity.date).format('YYYY-MM-DD');
@@ -123,7 +128,12 @@ class DetailDao extends SuperDao {
                 dailyData[dayKey].rangeSummary = dailyData[dayKey].income - dailyData[dayKey].outcome;
             }
 
-            return dailyData;
+            const dailyArray = Object.keys(dailyData).map(dayKey => ({
+                date: dayKey,
+                ...dailyData[dayKey]
+            }));
+
+            return dailyArray;
         }
     }
 
