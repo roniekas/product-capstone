@@ -102,7 +102,9 @@ class BillService {
 
     readingImage = async (imagePath, imageName) => {
         let isSuccess = true;
-        let data = {};
+        let data = {
+            "scannedItems": []
+        };
         const modelResult = await this.readFromML(imagePath, imageName);
 
         if(!modelResult.items){
@@ -115,10 +117,17 @@ class BillService {
             const category = item.category;
             const itemName = item.name;
             const price = item.price;
-            if (!data[category]) {
-                data[category] = {};
+
+            let categoryObj = data.scannedItems.find(c => c.category === category);
+            if (!categoryObj) {
+                categoryObj = { category, items: [] };
+                data.scannedItems.push(categoryObj);
             }
-            data[category][itemName] = price;
+
+            categoryObj.items.push({
+                title: itemName,
+                price: price
+            });
         });
 
         data.billDetails = generateBillDetails(modelResult.totals ?? 0);
