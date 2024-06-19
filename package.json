@@ -12,6 +12,8 @@
   "license": "ISC",
   "private": true,
   "dependencies": {
+    "@google-cloud/storage": "^7.11.2",
+    "axios": "^1.7.2",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "cross-env": "^7.0.3",
@@ -22,6 +24,7 @@
     "joi": "^17.4.2",
     "jsonwebtoken": "^8.5.1",
     "md5": "^2.3.0",
+    "mime-types": "^2.1.35",
     "moment": "^2.29.2",
     "mysql2": "^2.3.3",
     "node-cron": "^3.0.0",
@@ -31,6 +34,7 @@
     "sequelize": "^6.6.5",
     "sequelize-cli": "^6.2.0",
     "socket.io": "^4.4.1",
+    "tmp": "^0.2.3",
     "winston": "^3.3.3",
     "winston-daily-rotate-file": "^4.5.5"
   },

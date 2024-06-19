@@ -14,21 +14,19 @@ class BillController {
 
     readImages = async (req, res) => {
         try {
-            const writeImage = await this.billService.base64ToPng(req);
+            const { imageName, imagePath } = await this.billService.base64ToPng(req);
 
-            if(!writeImage){
+            if(!imageName){
                 return res.status(httpStatus.BAD_REQUEST).send({ "status": false, "message": "failed to generate Images" });
             }
 
-            const readImageFromModel = await this.billService.readingImage(writeImage);
+            const readImageFromModel = await this.billService.readingImage(imagePath, imageName);
             const { isSuccess, data } = readImageFromModel;
             if(!isSuccess){
-                logger.info(`${writeImage}, is deleted due to failed reading images`);
-                await deleteFilesAsync([writeImage]);
+                logger.info(`${imageName}, is deleted due to failed reading images`);
                 return res.status(httpStatus.BAD_REQUEST).send({ "status": false, "message": "model failed to generate data" });
             }
 
-            await this.billService.uploadToBucket(writeImage);
             res.status(httpStatus.OK).send({ "status": true, "message" : "Success read data", data });
         } catch (e) {
             logger.error(e);

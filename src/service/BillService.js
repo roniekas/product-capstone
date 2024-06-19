@@ -6,12 +6,50 @@ const responseHandler = require('../helper/responseHandler');
 const logger = require('../config/logger');
 const fs = require('fs');
 const path = require('path');
-const { randomNumber, generateRandomResult, deleteFilesAsync } = require('../helper/general');
+const { deleteFilesAsync, generateBillDetails } = require('../helper/general');
+const axios = require('axios');
+const {Storage} = require('@google-cloud/storage');
+const fsa = require('node:fs/promises');
 
 class BillService {
     constructor() {
         this.walletDao = new WalletDao();
         this.billDao = new BillDao();
+    }
+
+    readFromML = async (filePath, fileName) => {
+        let imageBuffer;
+        try {
+            imageBuffer = await fsa.readFile(filePath);
+        } catch (err) {
+            console.error("Error reading file:", err);
+        }
+
+        const myBuffer = Buffer.from(imageBuffer);
+        const blob = new Blob([myBuffer], { type: 'image/jpg' });
+        const formData = new FormData();
+
+        formData.set('image', blob, fileName);
+        let returnedData;
+
+        await axios.post('https://ml-syb-image-ytpe6qeg4a-uc.a.run.app/process', formData, {
+            headers: {
+                'Content-Type': "image/png"
+            },
+            cache: false,
+            maxContentLength: Infinity,
+            maxBodyLength: Infinity
+        })
+            .then(response => {
+                console.log('data => ', response.data);
+                returnedData = response.data;
+            })
+            .catch(error => {
+                console.error('error => ', error);
+                returnedData = 'ERROR_READING_MODEL';
+            });
+
+        return returnedData;
     }
 
     /**
@@ -40,41 +78,52 @@ class BillService {
         let userId = req.user.userId ?? '';
         userId = userId.replace(/-/g, '');
 
-        let data = req.body.images;
-        data = data.replace(/^data:image\/png;base64,/, '');
+        let imageData = req.body.images;
+
+        const matches = imageData.match(/^data:image\/([a-z]+);base64,/);
+        const fileExtension = matches ? matches[1] : 'png';
+
+        imageData = imageData.replace(/^data:image\/[a-z]+;base64,/, '');
 
         const timestamp = Date.now();
-        const imageName = `${userId}-${timestamp}.png`;
+        const imageName = `${userId}-${timestamp}.${fileExtension}`;
 
         const imagePath = path.resolve(__dirname, '../tmp', imageName);
 
-        fs.writeFile(imagePath, data, 'base64', function(err) {
+        fs.writeFile(imagePath, imageData, 'base64', function(err) {
             if (err) {
                 console.error('Error saving image:', err);
                 return null;
             }
         });
-        return imageName;
-    }
 
-    readingImage = async (image) => {
+        return { imageName, imagePath };
+    };
+
+    readingImage = async (imagePath, imageName) => {
         let isSuccess = true;
         let data = {};
-        const number = randomNumber(1, 10);
-        if(number < 5){
+        const modelResult = await this.readFromML(imagePath, imageName);
+
+        if(!modelResult.items){
             isSuccess = false;
+            data = 'failed reading models';
             return {isSuccess, data}
         }
 
-        data = generateRandomResult(image);
+        modelResult.items.forEach(item => {
+            const category = item.category;
+            const itemName = item.name;
+            const price = item.price;
+            if (!data[category]) {
+                data[category] = {};
+            }
+            data[category][itemName] = price;
+        });
+
+        data.billDetails = generateBillDetails(modelResult.totals ?? 0);
 
         return {isSuccess, data}
-    }
-
-    uploadToBucket = async (image) => {
-        logger.info(`${image}, successfully uploaded`);
-        logger.info(`${image}, will be deleted due to successfully upload`);
-        await deleteFilesAsync([image]);
     }
 }
 
