@@ -17,14 +17,14 @@ class BillController {
             const { imageName, imagePath } = await this.billService.base64ToPng(req);
 
             if(!imageName){
-                return res.status(httpStatus.BAD_REQUEST).send({ "status": false, "message": "failed to generate Images" });
+                return res.status(httpStatus.BAD_REQUEST).send({ "status": false, "message": "Failed generating images" });
             }
 
             const readImageFromModel = await this.billService.readingImage(imagePath, imageName);
             const { isSuccess, data } = readImageFromModel;
             if(!isSuccess){
                 logger.info(`${imageName}, is deleted due to failed reading images`);
-                return res.status(httpStatus.BAD_REQUEST).send({ "status": false, "message": "model failed to generate data" });
+                return res.status(httpStatus.BAD_REQUEST).send({ "status": false, "message": "Model failed to generate data" });
             }
 
             res.status(httpStatus.OK).send({ "status": true, "message" : "Success read data", data });
@@ -41,22 +41,22 @@ class BillController {
 
             const isWalletExist = await this.walletService.getWalletById(req.body.walletId);
             if(!isWalletExist.response.status){
-                return res.status(httpStatus.BAD_REQUEST).send({ "status": false, "message": "wallet not found!" });
+                return res.status(httpStatus.BAD_REQUEST).send({ "status": false, "message": "Wallet not found!" });
             }
 
             const activityData = transformRequestData(req.body.items, walletId, billId, userId);
 
             const isSuccessAddActivity = await this.activityService.createMany(activityData);
             if(!isSuccessAddActivity){
-                return res.status(httpStatus.BAD_REQUEST).send({ "status": false, "message": "failed to save activity" });
+                return res.status(httpStatus.BAD_REQUEST).send({ "status": false, "message": "Failed saving activity" });
             }
 
             const addBillData = await this.billService.createBill(billId, userId, req.body.billDetails);
             if(!addBillData){
-                return res.status(httpStatus.BAD_REQUEST).send({ "status": false, "message": "failed to save bill" });
+                return res.status(httpStatus.BAD_REQUEST).send({ "status": false, "message": "Failed saving bill" });
             }
 
-            return res.status(httpStatus.CREATED).send({ "status": true, "message": "success add bill" });
+            return res.status(httpStatus.CREATED).send({ "status": true, "message": "Success adding bill" });
         } catch (e) {
             logger.error(e);
             res.status(httpStatus.BAD_GATEWAY).send(e);
@@ -64,7 +64,7 @@ class BillController {
     }
 
     checkHealth = async (req, res) => {
-        return res.status(httpStatus.OK).send({ "status": "OK", "message": "health check" });
+        return res.status(httpStatus.OK).send({ "status": "OK", "message": "Health Check" });
     }
 }
 
