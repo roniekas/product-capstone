@@ -45,6 +45,20 @@ class UserService {
         }
     };
 
+    checkUser = async (userBody) => {
+        try {
+            let message = 'User Not Registered!';
+            if (await this.userDao.isUsernameExists(userBody.userName)) {
+                return responseHandler.returnError(httpStatus.BAD_REQUEST, 'User Was Registered');
+            }
+
+            return responseHandler.returnSuccess(httpStatus.CREATED, message);
+        } catch (e) {
+            logger.error(e);
+            return responseHandler.returnError(httpStatus.BAD_REQUEST, 'Something went wrong!');
+        }
+    };
+
     /**
      * Get user
      * @param {String} email

@@ -29,6 +29,19 @@ class AuthController {
         }
     };
 
+    check = async (req, res) => {
+        try {
+            const user = await this.userService.checkUser(req.body);
+            const { status } = user.response;
+
+            const { message, data } = user.response;
+            res.status(user.statusCode).send({ status, message, data });
+        } catch (e) {
+            logger.error(e);
+            res.status(httpStatus.BAD_GATEWAY).send(e);
+        }
+    };
+
     checkEmail = async (req, res) => {
         try {
             const isExists = await this.userService.isEmailExists(req.body.email.toLowerCase());

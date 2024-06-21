@@ -6,8 +6,7 @@ class BudgetValidator {
     async userCreateValidator(req, res, next) {
         // create schema object
         const schema = Joi.object({
-            userName: Joi.string(),
-            userPin: Joi.string(),
+            userName: Joi.string()
         });
 
         // schema options
